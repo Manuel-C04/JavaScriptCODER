@@ -1,22 +1,45 @@
+const tasasIva = [
+    { producto: 'Producto A', iva: 0.18 },
+    { producto: 'Producto B', iva: 0.21 },
+];
+
+function obtenerTasaIva(producto) {
+    const tasaEncontrada = tasasIva.find(item => item.producto === producto);
+    return tasaEncontrada ? tasaEncontrada.iva : 0.21;
+}
+
 function calcularIva() {
+    let producto = prompt('Ingrese el nombre o código del producto: ');
+
+    if (!producto) {
+        alert('Operación cancelada. Inténtelo de nuevo.');
+        return;
+    }
+
     let numeroUser;
     do {
-        const userInput = prompt('Ingrese un número para calcular su IVA: ');
-        numeroUser = parseInt(userInput);
+        const userInput = prompt('Ingrese el precio del producto: ');
+
+        if (userInput === null) {
+            alert('Operación cancelada. Inténtelo de nuevo.');
+            return;
+        }
+
+        numeroUser = parseFloat(userInput);
 
         if (isNaN(numeroUser)) {
-            alert('Por favor, ingrese un número válido.');
+            alert('Por favor, ingrese un precio válido.');
         }
     } while (isNaN(numeroUser));
 
-    if (!isNaN(numeroUser)) {
-        const iva = numeroUser * 0.21;
-        alert(`El IVA es: ` + iva);
-    }
+    const tasaIva = obtenerTasaIva(producto);
+    const iva = numeroUser * tasaIva;
+
+    alert(`El IVA para ${producto} es: ${iva.toFixed(2)} (Tasa: ${tasaIva * 100}%)`);
 }
 
-calcularIva();
-calcularIva();
-calcularIva();
-calcularIva();
-calcularIva();
+function ejecutarProcesos() {
+    calcularIva();
+}
+
+ejecutarProcesos();
