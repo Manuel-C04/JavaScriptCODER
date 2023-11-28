@@ -16,6 +16,12 @@ function calcularIva() {
         return;
     }
 
+    const tasaIva = obtenerTasaIva(producto);
+
+    if (tasaIva === undefined) {
+        alert('Producto no encontrado. Se aplicará la tasa por defecto.');
+    }
+
     let numeroUser;
     do {
         const userInput = prompt('Ingrese el precio del producto: ');
@@ -32,7 +38,6 @@ function calcularIva() {
         }
     } while (isNaN(numeroUser));
 
-    const tasaIva = obtenerTasaIva(producto);
     const iva = numeroUser * tasaIva;
 
     alert(`El IVA para ${producto} es: ${iva.toFixed(2)} (Tasa: ${tasaIva * 100}%)`);
@@ -43,3 +48,4 @@ function ejecutarProcesos() {
 }
 
 ejecutarProcesos();
+
