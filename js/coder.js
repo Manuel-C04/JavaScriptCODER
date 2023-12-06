@@ -3,49 +3,43 @@ const tasasIva = [
     { producto: 'Producto B', iva: 0.21 },
 ];
 
+
 function obtenerTasaIva(producto) {
-    const tasaEncontrada = tasasIva.find(item => item.producto === producto);
-    return tasaEncontrada ? tasaEncontrada.iva : 0.21;
+    const tasaEnLocalStorage = localStorage.getItem(producto);
+    return tasaEnLocalStorage ? parseFloat(tasaEnLocalStorage) : 0.21;
 }
 
 function calcularIva() {
-    let producto = prompt('Ingrese el nombre o código del producto: ');
+    const productoInput = document.getElementById('producto');
+    const precioInput = document.getElementById('precio');
+    const resultadoDiv = document.getElementById('resultado');
 
-    if (!producto) {
-        alert('Operación cancelada. Inténtelo de nuevo.');
+    const producto = productoInput.value;
+    const tasaIva = obtenerTasaIva(producto);
+
+    const precio = parseFloat(precioInput.value);
+
+    if (isNaN(precio)) {
+        resultadoDiv.textContent = 'Por favor, ingrese un precio válido.';
         return;
     }
 
-    const tasaIva = obtenerTasaIva(producto);
+    const iva = precio * tasaIva;
 
-    if (tasaIva === undefined) {
-        alert('Producto no encontrado. Se aplicará la tasa por defecto.');
-    }
 
-    let numeroUser;
-    do {
-        const userInput = prompt('Ingrese el precio del producto: ');
+    resultadoDiv.textContent = `El IVA para ${producto} es: ${iva.toFixed(2)} (Tasa: ${tasaIva * 100}%)`;
 
-        if (userInput === null) {
-            alert('Operación cancelada. Inténtelo de nuevo.');
-            return;
-        }
 
-        numeroUser = parseFloat(userInput);
-
-        if (isNaN(numeroUser)) {
-            alert('Por favor, ingrese un precio válido.');
-        }
-    } while (isNaN(numeroUser));
-
-    const iva = numeroUser * tasaIva;
-
-    alert(`El IVA para ${producto} es: ${iva.toFixed(2)} (Tasa: ${tasaIva * 100}%)`);
+    localStorage.setItem(producto, tasaIva);
 }
 
-function ejecutarProcesos() {
+function handleClick() {
     calcularIva();
 }
 
-ejecutarProcesos();
+
+const botonCalcular = document.getElementById('calcular');
+
+
+botonCalcular.addEventListener('click', handleClick);
 
