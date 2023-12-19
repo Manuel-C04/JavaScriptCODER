@@ -1,45 +1,47 @@
-const tasasIva = [
-    { producto: 'Producto A', iva: 0.18 },
-    { producto: 'Producto B', iva: 0.21 },
-];
+document.getElementById('search').addEventListener('click', function () {
+    const cityInput = document.getElementById('city');
+    const cityName = cityInput.value.trim();
 
-
-function obtenerTasaIva(producto) {
-    const tasaEnLocalStorage = localStorage.getItem(producto);
-    return tasaEnLocalStorage ? parseFloat(tasaEnLocalStorage) : 0.21;
-}
-
-function calcularIva() {
-    const productoInput = document.getElementById('producto');
-    const precioInput = document.getElementById('precio');
-    const resultadoDiv = document.getElementById('resultado');
-
-    const producto = productoInput.value;
-    const tasaIva = obtenerTasaIva(producto);
-
-    const precio = parseFloat(precioInput.value);
-
-    if (isNaN(precio)) {
-        resultadoDiv.textContent = 'Por favor, ingrese un precio válido.';
-        return;
+    if (cityName) {
+        obtenerDatosClima(cityName);
+    } else {
+        console.log('Por favor, ingrese el nombre de la ciudad.');
     }
+});
 
-    const iva = precio * tasaIva;
+async function obtenerDatosClima(ciudad) {
+    const apiKey = '1d468c9aea68f8435a5665d1211f20ec';
+    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${ciudad}&appid=${apiKey}&units=metric`;
 
+    try {
+        const respuesta = await fetch(apiUrl);
 
-    resultadoDiv.textContent = `El IVA para ${producto} es: ${iva.toFixed(2)} (Tasa: ${tasaIva * 100}%)`;
+        if (!respuesta.ok) {
+            throw new Error('No se pudo obtener datos del clima.');
+        }
 
+        const datosClima = await respuesta.json();
 
-    localStorage.setItem(producto, tasaIva);
+        mostrarDatosClima(datosClima);
+    } catch (error) {
+        console.error('Error al obtener datos del clima:', error.message);
+        mostrarError();
+    }
 }
 
-function handleClick() {
-    calcularIva();
+function mostrarDatosClima(datos) {
+    const weatherInfoDiv = document.getElementById('weather-info');
+    const temperatura = datos.main.temp;
+    const descripcion = datos.weather[0].description;
+
+    weatherInfoDiv.innerHTML = `<p>Temperatura: ${temperatura} °C</p><p>Descripción: ${descripcion}</p>`;
+}
+
+function mostrarError() {
+    const weatherInfoDiv = document.getElementById('weather-info');
+    weatherInfoDiv.textContent = 'Hubo un error al obtener datos del clima. Por favor, inténtelo nuevamente.';
 }
 
 
-const botonCalcular = document.getElementById('calcular');
 
-
-botonCalcular.addEventListener('click', handleClick);
 
