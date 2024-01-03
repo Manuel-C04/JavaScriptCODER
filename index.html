@@ -1,20 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weather App</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Righteous&display=swap" rel="stylesheet">
+  <title>Clima App</title>
 </head>
 <body>
-    <h1>Weather App</h1>
-
-    <label for="city">Ingrese el nombre de la ciudad:</label>
-    <input type="text" id="city" placeholder="Ej. Buenos Aires">
-
-    <button id="search">Buscar Clima</button>
-
+  <div class="contenedor">
+    <h1 class="title">- Clima App -</h1>
+    <!-- Agregado el formulario -->
+    <form id="weatherForm" onsubmit="getWeather(); return false;">
+      <label for="city" class="city1">Ingrese la ciudad:</label>
+      <input type="text" id="city" placeholder="Ej. Buenos Aires">
+      <button type="submit" class="info">Obtener Clima<i class="fa-solid fa-cloud"></i></button>
+    </form>
     <div id="weather-info"></div>
-
-    <script src="/js/coder.js"></script>
+  </div>
+  <script src="js/coder.js"></script>
+  <script src="https://kit.fontawesome.com/68b5939873.js" crossorigin="anonymous"></script>
 </body>
 </html>
+

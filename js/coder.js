@@ -1,47 +1,58 @@
-document.getElementById('search').addEventListener('click', function () {
-    const cityInput = document.getElementById('city');
-    const cityName = cityInput.value.trim();
+const apiKey = '1d468c9aea68f8435a5665d1211f20ec';
+const weatherInfoDiv = document.getElementById('weather-info');
 
-    if (cityName) {
-        obtenerDatosClima(cityName);
-    } else {
-        console.log('Por favor, ingrese el nombre de la ciudad.');
-    }
+// Cargar la última ciudad al iniciar la aplicación
+document.addEventListener('DOMContentLoaded', () => {
+  const lastCity = localStorage.getItem('lastCity');
+  if (lastCity) {
+    document.getElementById('city').value = lastCity;
+  }
 });
 
-async function obtenerDatosClima(ciudad) {
-    const apiKey = '1d468c9aea68f8435a5665d1211f20ec';
-    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${ciudad}&appid=${apiKey}&units=metric`;
+function getWeather() {
+  const city = document.getElementById('city').value;
+  if (!city) {
+    alert('Por favor, ingrese una ciudad.');
+    return;
+  }
+  const geocodingUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
 
-    try {
-        const respuesta = await fetch(apiUrl);
+  fetch(geocodingUrl)
+    .then(response => response.json())
+    .then(geocodingData => {
+      const lat = geocodingData.coord.lat;
+      const lon = geocodingData.coord.lon;
+      const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}`;
 
-        if (!respuesta.ok) {
-            throw new Error('No se pudo obtener datos del clima.');
-        }
+      fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+          // Guardar la ciudad en localStorage
+          localStorage.setItem('lastCity', city);
 
-        const datosClima = await respuesta.json();
-
-        mostrarDatosClima(datosClima);
-    } catch (error) {
-        console.error('Error al obtener datos del clima:', error.message);
-        mostrarError();
-    }
+          // Mostrar la información del clima
+          displayWeather(data);
+        })
+        .catch(error => {
+          console.error('Error al obtener datos del clima:', error);
+          weatherInfoDiv.innerHTML = 'Error al obtener datos del clima. Por favor, intenta nuevamente.';
+        });
+    })
+    .catch(error => {
+      console.error('Error al obtener coordenadas:', error);
+      weatherInfoDiv.innerHTML = 'Error al obtener coordenadas. Por favor, intenta nuevamente.';
+    });
 }
 
-function mostrarDatosClima(datos) {
-    const weatherInfoDiv = document.getElementById('weather-info');
-    const temperatura = datos.main.temp;
-    const descripcion = datos.weather[0].description;
+function displayWeather(data) {
+  const cityName = data.name;
+  const temperatureKelvin = data.main.temp;
+  const temperatureCelsius = temperatureKelvin - 273.15;
+  const weatherDescription = data.weather[0].description;
 
-    weatherInfoDiv.innerHTML = `<p>Temperatura: ${temperatura} °C</p><p>Descripción: ${descripcion}</p>`;
+  const weatherInfoHTML = `<p>Clima en ${cityName}: ${temperatureCelsius.toFixed(2)}°C, ${weatherDescription}</p>`;
+  weatherInfoDiv.innerHTML = weatherInfoHTML;
 }
-
-function mostrarError() {
-    const weatherInfoDiv = document.getElementById('weather-info');
-    weatherInfoDiv.textContent = 'Hubo un error al obtener datos del clima. Por favor, inténtelo nuevamente.';
-}
-
 
 
 
